@@ -20,7 +20,7 @@ export const useSlotContext = () => useContext(SlotContext);
  * @param height - Optional height dimension (string with CSS units or number for pixels)
  * @param width - Optional width dimension (string with CSS units or number for pixels)
  */
-const AIElementSlot: React.FC<{ children: React.ReactNode }> = (
+const AIElementSlot: React.FC<AIElementSlotProps> = (
   props: AIElementSlotProps,
 ) => {
   const { height, width, children } = props;

@@ -1,5 +1,5 @@
 import React from "react";
-import { ParsedImport } from "./types";
+import { ParsedImport } from "../../types";
 
 // Pure function to create import map
 const createImportMap = (
@@ -49,6 +49,7 @@ const parseImports = (
 
   while ((match = importRegex.exec(code))) {
     const [fullMatch, importedItems, moduleName] = match;
+
     const importedModule = importMap[moduleName];
 
     if (!importedModule) {
@@ -57,9 +58,33 @@ const parseImports = (
       continue;
     }
 
-    const parsedVars = importedItems.startsWith("{")
-      ? parseNamedImports(importedItems, importedModule)
-      : parseDefaultImport(importedItems, importedModule);
+    // Handle mixed imports: "React, { useState }" or "React, {useState}" etc.
+    let parsedVars: Record<string, any> = {};
+
+    if (importedItems.includes(",")) {
+      // Mixed import: default + named
+      const parts = importedItems.split(",");
+      const defaultPart = parts[0].trim();
+      const namedPart = parts.slice(1).join(",").trim();
+
+      // Parse default import
+      if (defaultPart) {
+        const defaultVars = parseDefaultImport(defaultPart, importedModule);
+        Object.assign(parsedVars, defaultVars);
+      }
+
+      // Parse named imports
+      if (namedPart) {
+        const namedVars = parseNamedImports(namedPart, importedModule);
+        Object.assign(parsedVars, namedVars);
+      }
+    } else if (importedItems.startsWith("{")) {
+      // Only named imports
+      parsedVars = parseNamedImports(importedItems, importedModule);
+    } else {
+      // Only default import
+      parsedVars = parseDefaultImport(importedItems, importedModule);
+    }
 
     Object.assign(localVars, parsedVars);
     sanitized = sanitized.replace(fullMatch, "");
@@ -72,4 +97,15 @@ const parseImports = (
 const removeExportDefault = (code: string): string =>
   code.replace(/export\s+default\s+/, "");
 
-export { createImportMap, parseImports, removeExportDefault };
+// Pure function to remove code block markers
+const removeCodeBlockMarkers = (code: string): string =>
+  code
+    .replace(/^```(?:tsx?|jsx?|javascript|typescript)?\s*\n?/, "")
+    .replace(/\n?```\s*$/, "");
+
+export {
+  createImportMap,
+  parseImports,
+  removeExportDefault,
+  removeCodeBlockMarkers,
+};

@@ -1,6 +1,11 @@
 import React from "react";
 import { transformCode } from "./babel";
-import { createImportMap, parseImports, removeExportDefault } from "./imports";
+import {
+  createImportMap,
+  parseImports,
+  removeCodeBlockMarkers,
+  removeExportDefault,
+} from "./imports";
 
 // create component scope
 const createScope = (localVars: Record<string, any>): Record<string, any> => ({
@@ -13,17 +18,27 @@ const evaluateComponent = (
   transformedCode: string,
   scope: Record<string, any>,
 ): React.ComponentType => {
+  // Extract component name from the code (assumes format: const ComponentName = ...)
+  const componentNameMatch = transformedCode.match(/const\s+(\w+)\s*[=:]/);
+  const componentName = componentNameMatch ? componentNameMatch[1] : null;
+
+  if (!componentName) {
+    throw new Error("Could not extract component name from code");
+  }
+
   // eslint-disable-next-line no-new-func
-  const Comp = new Function(
+  const result = new Function(
     ...Object.keys(scope),
-    `"use strict"; return (${transformedCode});`,
+    `"use strict";
+     ${transformedCode}
+     return ${componentName};`,
   )(...Object.values(scope));
 
-  if (typeof Comp !== "function" && typeof Comp !== "object") {
+  if (typeof result !== "function" && typeof result !== "object") {
     throw new Error("Provided code did not export a React component.");
   }
 
-  return Comp;
+  return result;
 };
 
 // Main compilation function
@@ -33,9 +48,16 @@ const compileComponent = (
 ): React.ComponentType | Error => {
   try {
     const importMap = createImportMap(imports);
-    const { localVars, sanitizedCode } = parseImports(code, importMap);
+    const withoutCodeBlockMarkers = removeCodeBlockMarkers(code);
+    console.log("withoutCodeBlockMarkers", withoutCodeBlockMarkers);
+    const { localVars, sanitizedCode } = parseImports(
+      withoutCodeBlockMarkers,
+      importMap,
+    );
     const withoutExports = removeExportDefault(sanitizedCode);
+    console.log("withoutExports", withoutExports);
     const transformed = transformCode(withoutExports);
+    console.log("transformed", transformed);
     const scope = createScope(localVars);
 
     return evaluateComponent(transformed, scope);

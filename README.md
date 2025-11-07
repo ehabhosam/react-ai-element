@@ -1,6 +1,7 @@
 # react-ai-element
 
-Runtime AI-generated React components from prompts.
+## No Risk No Fun: Runtime AI-generated React components from prompts.
+
 
 ```tsx
 import { AIElement } from 'react-ai-element';

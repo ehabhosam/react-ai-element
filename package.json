@@ -1,0 +1,56 @@
+{
+  "name": "react-ai-element",
+  "version": "0.1.0",
+  "description": "Runtime AI-generated React components from prompts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ehab7osam/react-ai-element.git"
+  },
+  "keywords": [
+    "react",
+    "ai",
+    "llm",
+    "runtime",
+    "ui",
+    "prompt"
+  ],
+  "author": "ehab7osam",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ehab7osam/react-ai-element/issues"
+  },
+  "homepage": "https://github.com/ehab7osam/react-ai-element#readme",
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/babel__standalone": "^7.1.9",
+    "@types/react": "^18.3.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.5.0"
+  },
+  "dependencies": {
+    "@babel/standalone": "^7.28.5",
+    "@google/genai": "^1.29.0",
+    "openai": "^6.8.1"
+  }
+}

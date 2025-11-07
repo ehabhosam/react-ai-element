@@ -5,7 +5,8 @@ import DefaultErrorComponent from "./error-component";
 interface DynamicRendererProps {
   code: string;
   imports?: Record<string, any>;
-  ErrorComponent?: React.FC;
+  componentProps?: Record<string, any>;
+  ErrorComponent?: React.ComponentType<any>;
 }
 
 /**
@@ -15,6 +16,7 @@ export const DynamicRenderer: React.FC<DynamicRendererProps> = ({
   code,
   imports = {},
   ErrorComponent = DefaultErrorComponent, // Default error component
+  componentProps = {},
 }) => {
   const Component = useMemo(
     () => compileComponent(code, imports),
@@ -22,10 +24,11 @@ export const DynamicRenderer: React.FC<DynamicRendererProps> = ({
   );
 
   if (Component instanceof Error) {
+    console.log(Component);
     return <ErrorComponent />;
   }
 
-  return <Component />;
+  return <Component {...componentProps} />;
 };
 
 export default DynamicRenderer;
