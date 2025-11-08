@@ -43,7 +43,11 @@ export const AIElement: React.FC<AIElementProps> = ({
       setError(null);
 
       try {
-        const generationPrompt = generateUIPrompt(prompt, config);
+        const generationPrompt = generateUIPrompt(
+          prompt,
+          config,
+          aiElementProps,
+        );
         const code = await modelInstance.generateResponse(generationPrompt);
         console.log(code);
         setGeneratedCode(code);

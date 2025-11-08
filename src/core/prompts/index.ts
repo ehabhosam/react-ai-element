@@ -1,8 +1,10 @@
 import { GenerationConfig } from "../../types";
+import { stringifyObjectInterface } from "../../utils";
 
 export function generateUIPrompt(
   prompt: string,
   config: GenerationConfig,
+  props?: Record<string, any>,
 ): string {
   return `
     You are an expert UI designer and front-end develper. You have 10 years of experience creating UIs and developing solid clean React components.
@@ -36,6 +38,8 @@ export function generateUIPrompt(
 
     Here is the prompt for the component you need to create:
     """${prompt}"""
+
+    ${provideProps(props)}
 
     AGAIN AND AGAIN, REMEMBER TO ONLY PROVIDE THE CODE, NO EXPLANATIONS OR ADDITIONAL TEXT NEITHER AFTER NOR BEFORE THE CODE.
   `;
@@ -106,4 +110,13 @@ Guidelines for library usage:
 `;
 
   return libraryInfo;
+}
+
+function provideProps(props: Record<string, any> | undefined): string {
+  if (props) {
+    return `- The component should accept the following props interface:
+      ${stringifyObjectInterface(props)}
+    `;
+  }
+  return "- The generated component does not accept any props.";
 }
