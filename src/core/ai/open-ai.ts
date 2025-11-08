@@ -6,7 +6,7 @@ class OpenaiModel extends AIModel<OpenAI> {
     const openaiClient = new OpenAI({
       apiKey: apiKey,
     });
-    super(modelName, apiKey, openaiClient);
+    super(modelName, openaiClient);
   }
 
   init(): void {

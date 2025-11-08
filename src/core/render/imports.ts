@@ -1,13 +1,17 @@
-import React from "react";
 import { ParsedImport } from "../../types";
+import { libraryRegistry } from "../library-registry";
 
-// Pure function to create import map
-const createImportMap = (
-  imports: Record<string, any>,
-): Record<string, any> => ({
-  react: React,
-  ...imports,
-});
+// Pure function to create import map with registry and user imports
+const createImportMap = (imports: Record<string, any>): Record<string, any> => {
+  const registryImports = libraryRegistry.getImportMap();
+
+  return {
+    // Registry libraries take precedence
+    ...registryImports,
+    // User-provided imports can override registry
+    ...imports,
+  };
+};
 
 // Pure function to parse named imports
 const parseNamedImports = (
@@ -53,7 +57,9 @@ const parseImports = (
     const importedModule = importMap[moduleName];
 
     if (!importedModule) {
-      console.warn(`⚠️ Unknown import: "${moduleName}" — skipping.`);
+      console.warn(
+        `⚠️ Unknown import: "${moduleName}" — skipping. Add it to your GenerationConfig.libraries or pass it via imports prop.`,
+      );
       sanitized = sanitized.replace(fullMatch, "");
       continue;
     }
@@ -84,6 +90,13 @@ const parseImports = (
     } else {
       // Only default import
       parsedVars = parseDefaultImport(importedItems, importedModule);
+    }
+
+    // Special handling for React imports to ensure hooks are available
+    if (moduleName === "react" && Object.keys(parsedVars).includes("React")) {
+      // If importing React as default, also make hooks available directly
+      const reactHooks = libraryRegistry.get("react/hooks") || {};
+      Object.assign(parsedVars, reactHooks);
     }
 
     Object.assign(localVars, parsedVars);

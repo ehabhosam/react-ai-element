@@ -4,7 +4,7 @@ import AIModel from "./ai-model";
 class GeminiModel extends AIModel<GoogleGenAI> {
   constructor(modelName: string, apiKey: string) {
     const geminiClient = new GoogleGenAI({ apiKey: apiKey });
-    super(modelName, apiKey, geminiClient);
+    super(modelName, geminiClient);
   }
 
   init(): void {

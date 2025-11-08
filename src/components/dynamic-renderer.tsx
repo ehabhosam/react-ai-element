@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { compileComponent } from "../core/render";
 import DefaultErrorComponent from "./error-component";
+import { libraryRegistry } from "../core/library-registry";
 
 interface DynamicRendererProps {
   code: string;
@@ -18,14 +19,19 @@ export const DynamicRenderer: React.FC<DynamicRendererProps> = ({
   ErrorComponent = DefaultErrorComponent, // Default error component
   componentProps = {},
 }) => {
-  const Component = useMemo(
-    () => compileComponent(code, imports),
-    [code, imports],
-  );
+  const Component = useMemo(() => {
+    // Merge registry imports with user-provided imports
+    const allImports = {
+      ...libraryRegistry.getImportMap(),
+      ...imports,
+    };
+
+    return compileComponent(code, allImports);
+  }, [code, imports]);
 
   if (Component instanceof Error) {
-    console.log(Component);
-    return <ErrorComponent />;
+    console.error("DynamicRenderer compilation error:", Component);
+    return <ErrorComponent error={Component} />;
   }
 
   return <Component {...componentProps} />;

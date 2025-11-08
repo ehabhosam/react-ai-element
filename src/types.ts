@@ -19,4 +19,5 @@ export interface GenerationConfig {
     | "font-awesome"
     | "heroicons"
     | "none";
+  libraries?: Record<string, any>;
 }
