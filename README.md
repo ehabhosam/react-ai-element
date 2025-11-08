@@ -104,6 +104,49 @@ import { GeminiModel } from 'react-ai-element';
 const model = new GeminiModel('gemini-2.0-flash', 'your-api-key');
 ```
 
+### Custom Models
+
+You can create custom AI model implementations by extending the `AIModel` base class:
+
+```tsx
+import { AIModel } from 'react-ai-element';
+
+class CustomModel extends AIModel<YourAIClient> {
+  constructor(modelName: string, apiKey: string) {
+    const client = new YourAIClient({ apiKey });
+    super(modelName, client);
+  }
+
+  init(): void {
+    // Initialize your AI client
+    console.log(`Custom model ${this.getModelName()} initialized`);
+  }
+
+  async generateResponse(prompt: string): Promise<string> {
+    try {
+      const client = this.getInstance();
+      const response = await client.generate({
+        model: this.getModelName(),
+        prompt: prompt,
+      });
+
+      if (!response.text) {
+        throw new Error("No content received from API");
+      }
+
+      return response.text;
+    } catch (error) {
+      console.error("Error generating response:", error);
+      throw new Error(`Failed to generate response: ${error.message}`);
+    }
+  }
+}
+
+// Use your custom model
+const customModel = new CustomModel('your-model-name', 'your-api-key');
+export const AIElement = createAIElement(customModel, config);
+```
+
 ## Library Registration
 
 Register any library for the AI to use in generated components:
