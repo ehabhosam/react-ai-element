@@ -1,8 +1,9 @@
 import OpenAI from "openai";
 import AIModel from "./ai-model";
+import { ChatModel } from "openai/resources";
 
 class OpenaiModel extends AIModel<OpenAI> {
-  constructor(modelName: string, apiKey: string) {
+  constructor(modelName: ChatModel, apiKey: string) {
     const openaiClient = new OpenAI({
       apiKey: apiKey,
     });
