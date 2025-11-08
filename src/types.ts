@@ -6,18 +6,5 @@ export interface ParsedImport {
 export interface GenerationConfig {
   preset: "ts" | "js";
   tailwind: boolean;
-  uiComponentLibrary?:
-    | "material-ui"
-    | "chakra-ui"
-    | "ant-design"
-    | "bootstrap"
-    | "semantic-ui"
-    | "none";
-  iconsLibrary?:
-    | "react-icons"
-    | "material-icons"
-    | "font-awesome"
-    | "heroicons"
-    | "none";
   libraries?: Record<string, any>;
 }

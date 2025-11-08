@@ -31,6 +31,9 @@ export function generateUIPrompt(
     Here is the configuration for the coding style you must follow:
     ${getCodingStyleFromConfig(config)}
 
+    Available libraries you can use in your component:
+    ${getAvailableLibrariesInfo(config)}
+
     Here is the prompt for the component you need to create:
     """${prompt}"""
 
@@ -46,8 +49,6 @@ function getCodingStyleFromConfig(config: GenerationConfig): string {
     styleGuide += "- Use TypeScript with just working types, no problem.\n";
   } else {
     styleGuide += "- Use JavaScript (no TypeScript).\n";
-    // TODO: condition it based on existance of prop types in provided config
-    // styleGuide += "- Use PropTypes for prop validation if needed.\n";
   }
 
   // Styling approach
@@ -60,61 +61,49 @@ function getCodingStyleFromConfig(config: GenerationConfig): string {
     styleGuide += "- Do not use Tailwind CSS classes.\n";
   }
 
-  // UI Component Library
-  if (config.uiComponentLibrary && config.uiComponentLibrary !== "none") {
-    switch (config.uiComponentLibrary) {
-      case "material-ui":
-        styleGuide +=
-          "- Use Material-UI (@mui/material) components when possible.\n";
-        styleGuide += "- Import components from @mui/material.\n";
-        break;
-      case "chakra-ui":
-        styleGuide += "- Use Chakra UI components when possible.\n";
-        styleGuide += "- Import components from @chakra-ui/react.\n";
-        break;
-      case "ant-design":
-        styleGuide += "- Use Ant Design components when possible.\n";
-        styleGuide += "- Import components from antd.\n";
-        break;
-      case "bootstrap":
-        styleGuide += "- Use React Bootstrap components when possible.\n";
-        styleGuide += "- Import components from react-bootstrap.\n";
-        break;
-      case "semantic-ui":
-        styleGuide += "- Use Semantic UI React components when possible.\n";
-        styleGuide += "- Import components from semantic-ui-react.\n";
-        break;
-    }
-  } else {
-    styleGuide +=
-      "- Build components from scratch using basic HTML elements.\n";
-    styleGuide += "- Do not use any external UI component libraries.\n";
-  }
-
-  // Icons Library
-  if (config.iconsLibrary && config.iconsLibrary !== "none") {
-    switch (config.iconsLibrary) {
-      case "react-icons":
-        styleGuide += "- Use react-icons for all icons.\n";
-        styleGuide += "- Import icons from react-icons/* packages.\n";
-        break;
-      case "material-icons":
-        styleGuide += "- Use Material Icons for all icons.\n";
-        styleGuide += "- Import icons from @mui/icons-material.\n";
-        break;
-      case "font-awesome":
-        styleGuide += "- Use Font Awesome icons.\n";
-        styleGuide += "- Import icons from @fortawesome/react-fontawesome.\n";
-        break;
-      case "heroicons":
-        styleGuide += "- Use Heroicons for all icons.\n";
-        styleGuide += "- Import icons from @heroicons/react.\n";
-        break;
-    }
-  } else {
-    styleGuide += "- Do not use any icon libraries.\n";
-    styleGuide += "- Use SVG or Unicode symbols for simple icons if needed.\n";
-  }
-
   return styleGuide;
+}
+
+function getAvailableLibrariesInfo(config: GenerationConfig): string {
+  if (!config.libraries || Object.keys(config.libraries).length === 0) {
+    return `
+No external libraries are available. Build components from scratch using:
+- Standard React hooks (useState, useEffect, etc.)
+- Basic HTML elements (div, button, input, etc.)
+- Inline styles or Tailwind classes based on your styling configuration
+- SVG or Unicode symbols for simple icons if needed
+`;
+  }
+
+  let libraryInfo = "The following libraries are available for use:\n\n";
+
+  for (const [libraryName, libraryExports] of Object.entries(
+    config.libraries,
+  )) {
+    libraryInfo += `**${libraryName}**:\n`;
+
+    if (libraryExports && typeof libraryExports === "object") {
+      const exports = Object.keys(libraryExports);
+      if (exports.length > 0) {
+        libraryInfo += `- Available exports: ${exports.slice(0, 10).join(", ")}${exports.length > 10 ? "..." : ""}\n`;
+        libraryInfo += `- Import syntax: import { ${exports[0]} } from '${libraryName}'\n`;
+      } else {
+        libraryInfo += `- Default import: import ${libraryName} from '${libraryName}'\n`;
+      }
+    } else {
+      libraryInfo += `- Default import: import ${libraryName} from '${libraryName}'\n`;
+    }
+    libraryInfo += "\n";
+  }
+
+  libraryInfo += `
+Guidelines for library usage:
+- Only use the libraries listed above
+- Use proper import syntax as shown
+- Prefer named imports when available exports are listed
+- If a library provides UI components, prefer using them over building from scratch
+- If icon libraries are available, use them instead of SVG or Unicode symbols
+`;
+
+  return libraryInfo;
 }
