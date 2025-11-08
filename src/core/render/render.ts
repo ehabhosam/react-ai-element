@@ -45,6 +45,7 @@ const evaluateComponent = (
 const compileComponent = (
   code: string,
   imports: Record<string, any>,
+  preset: "ts" | "js",
 ): React.ComponentType | Error => {
   try {
     const importMap = createImportMap(imports);
@@ -56,7 +57,7 @@ const compileComponent = (
     );
     const withoutExports = removeExportDefault(sanitizedCode);
     console.log("withoutExports", withoutExports);
-    const transformed = transformCode(withoutExports);
+    const transformed = transformCode(withoutExports, preset);
     console.log("transformed", transformed);
     const scope = createScope(localVars);
 

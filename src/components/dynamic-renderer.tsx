@@ -8,6 +8,7 @@ interface DynamicRendererProps {
   imports?: Record<string, any>;
   componentProps?: Record<string, any>;
   ErrorComponent?: React.ComponentType<any>;
+  preset: "ts" | "js";
 }
 
 /**
@@ -18,6 +19,7 @@ export const DynamicRenderer: React.FC<DynamicRendererProps> = ({
   imports = {},
   ErrorComponent = DefaultErrorComponent, // Default error component
   componentProps = {},
+  preset,
 }) => {
   const Component = useMemo(() => {
     // Merge registry imports with user-provided imports
@@ -26,7 +28,7 @@ export const DynamicRenderer: React.FC<DynamicRendererProps> = ({
       ...imports,
     };
 
-    return compileComponent(code, allImports);
+    return compileComponent(code, allImports, preset);
   }, [code, imports]);
 
   if (Component instanceof Error) {

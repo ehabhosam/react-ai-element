@@ -30,7 +30,10 @@
     "llm",
     "runtime",
     "ui",
-    "prompt"
+    "prompt",
+    "gemini",
+    "vibe",
+    "openai"
   ],
   "author": "ehab7osam",
   "license": "MIT",

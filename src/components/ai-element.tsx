@@ -77,6 +77,7 @@ export const AIElement: React.FC<AIElementProps> = ({
       code={generatedCode}
       componentProps={aiElementProps}
       ErrorComponent={ErrorComponent}
+      preset={config.preset}
     />
   );
 };
