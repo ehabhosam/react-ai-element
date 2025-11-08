@@ -5,6 +5,7 @@ import { DynamicRenderer } from "./dynamic-renderer";
 import { generateUIPrompt } from "../core/prompts";
 import { GenerationConfig } from "../types";
 import AILoadingComponent from "./loading-component";
+import DefaultErrorComponent from "./error-component";
 
 interface AIElementProps {
   modelInstance: AIModel<any>;
@@ -12,6 +13,7 @@ interface AIElementProps {
   config: GenerationConfig;
   aiElementProps?: Record<string, any>;
   ErrorComponent?: React.ComponentType<any>;
+  LoadingComponent?: React.ComponentType<any>;
 }
 
 export const AIElement: React.FC<AIElementProps> = ({
@@ -19,6 +21,7 @@ export const AIElement: React.FC<AIElementProps> = ({
   config,
   aiElementProps = {},
   ErrorComponent,
+  LoadingComponent,
   modelInstance,
 }) => {
   const insideSlot = useSlotContext();
@@ -57,14 +60,14 @@ export const AIElement: React.FC<AIElementProps> = ({
   }, [prompt, modelInstance]);
 
   if (isLoading) {
-    return <AILoadingComponent />;
+    return LoadingComponent ? <LoadingComponent /> : <AILoadingComponent />;
   }
 
   if (error) {
-    return (
-      <div className="ai-element-error">
-        <p>Error generating component: {error}</p>
-      </div>
+    return ErrorComponent ? (
+      <ErrorComponent error={new Error(error)} />
+    ) : (
+      <DefaultErrorComponent error={new Error(error)} />
     );
   }
 
