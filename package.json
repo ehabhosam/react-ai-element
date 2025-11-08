@@ -10,9 +10,9 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ehab7osam/react-ai-element.git"
+    "url": "git+https://github.com/ehabhosam/react-ai-element.git"
   },
   "keywords": [
     "react",
@@ -35,12 +35,12 @@
     "vibe",
     "openai"
   ],
-  "author": "ehab7osam",
+  "author": "ehabhosam",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ehab7osam/react-ai-element/issues"
+    "url": "https://github.com/ehabhosam/react-ai-element/issues"
   },
-  "homepage": "https://github.com/ehab7osam/react-ai-element#readme",
+  "homepage": "https://github.com/ehabhosam/react-ai-element#readme",
   "peerDependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
