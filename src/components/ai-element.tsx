@@ -4,6 +4,7 @@ import AIModel from "../core/ai/ai-model";
 import { DynamicRenderer } from "./dynamic-renderer";
 import { generateUIPrompt } from "../core/prompts";
 import { GenerationConfig } from "../types";
+import AILoadingComponent from "./loading-component";
 
 interface AIElementProps {
   modelInstance: AIModel<any>;
@@ -56,7 +57,7 @@ export const AIElement: React.FC<AIElementProps> = ({
   }, [prompt, modelInstance]);
 
   if (isLoading) {
-    return <div className="ai-element-loading">Generating component...</div>;
+    return <AILoadingComponent />;
   }
 
   if (error) {

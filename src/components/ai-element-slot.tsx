@@ -25,7 +25,9 @@ const AIElementSlot: React.FC<AIElementSlotProps> = (
 ) => {
   const { height, width, children } = props;
 
-  const style: React.CSSProperties = {};
+  const style: React.CSSProperties = {
+    // overflow: "hidden",
+  };
 
   if (height !== undefined) {
     if (isValidCSSDimension(height)) {
