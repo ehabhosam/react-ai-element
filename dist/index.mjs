@@ -772,9 +772,68 @@ var GeminiModel = class extends ai_model_default {
   }
 };
 var gemini_default = GeminiModel;
+
+// src/core/ai/anthropic.ts
+import Anthropic from "@anthropic-ai/sdk";
+var AnthropicModel = class extends ai_model_default {
+  constructor(modelName, apiKey) {
+    const anthropicClient = new Anthropic({
+      apiKey
+    });
+    super(modelName, anthropicClient);
+  }
+  init() {
+    console.log(`Anthropic model ${this.getModelName()} initialized`);
+  }
+  async generateResponse(prompt) {
+    try {
+      const client = this.getInstance();
+      const message = await client.messages.create({
+        model: this.getModelName(),
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 4e3,
+        temperature: 0.7
+      });
+      const content = message.content;
+      if (!content) {
+        throw new Error("No content received from Anthropic API");
+      }
+      return processAnthropicResponse(content);
+    } catch (error) {
+      console.error("Error generating response from Anthropic:", error);
+      throw new Error(
+        `Failed to generate response: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
+    }
+  }
+};
+var anthropic_default = AnthropicModel;
+function processAnthropicResponse(response) {
+  let result = "";
+  for (const block of response) {
+    switch (block.type) {
+      case "text":
+        result += block.text;
+        break;
+      case "web_search_tool_result":
+        result += block.content;
+        break;
+      default:
+        console.warn(`Unhandled content block type: ${block.type}`);
+        break;
+    }
+  }
+  return result;
+}
 export {
   ai_element_slot_default as AIElementSlot,
   ai_model_default as AIModel,
+  anthropic_default as AnthropicModel,
   gemini_default as GeminiModel,
   open_ai_default as OpenaiModel,
   createAIElement

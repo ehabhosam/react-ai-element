@@ -1,6 +1,6 @@
 # react-ai-element
 
-Runtime AI-generated React components from text prompts. Generate UI components on-the-fly using OpenAI or Google Gemini.
+Runtime AI-generated React components from text prompts. Generate UI components on-the-fly using OpenAI, Anthropic or Google models.
 
 ## Quick Start
 
@@ -12,12 +12,19 @@ npm install react-ai-element
 ### 2. Setup
 ```tsx
 // ai-element.config.ts
-import { createAIElement, GeminiModel, OpenaiModel } from 'react-ai-element';
+import {
+  createAIElement,
+  GeminiModel,
+  OpenaiModel,
+  AnthropicModel
+} from 'react-ai-element';
 
 // Choose your AI model
 const model = new GeminiModel('gemini-2.0-flash', 'your-api-key');
 // or
 // const model = new OpenaiModel('gpt-4', 'your-api-key');
+// or
+// const model = new AnthropicModel('claude-sonnet-4-5-20250929', 'your-api-key');
 
 // Configure generation settings
 const config = {
@@ -57,7 +64,7 @@ function App() {
 Creates a configured AI element component.
 
 **Parameters:**
-- `model` - AI model instance (OpenaiModel or GeminiModel)
+- `model` - AI model instance (OpenaiModel, GeminiModel, AnthropicModel, or custom AIModel implementation)
 - `config` - Generation configuration
 
 **Returns:** Configured AIElement component
@@ -102,6 +109,13 @@ const model = new OpenaiModel('gpt-4', 'sk-...');
 import { GeminiModel } from 'react-ai-element';
 
 const model = new GeminiModel('gemini-2.0-flash', 'your-api-key');
+```
+
+### Anthropic Claude
+```tsx
+import { AnthropicModel } from 'react-ai-element';
+
+const model = new AnthropicModel('claude-sonnet-4-5-20250929', 'your-api-key');
 ```
 
 ### Custom Models
@@ -256,22 +270,7 @@ Now AI can use both: `import { Button } from '@mui/material'` and `import { Inpu
 </AIElementSlot>
 ```
 
-### TypeScript Example
-```tsx
-<AIElementSlot height="400px">
-  <AIElement
-    prompt="TypeScript todo list with add/remove functionality"
-    aiElementProps={{
-      initialTodos: [
-        { id: 1, text: 'Learn React', done: false },
-        { id: 2, text: 'Try AI Element', done: true }
-      ]
-    }}
-  />
-</AIElementSlot>
-```
-
-## Error Handling
+## Custom Error & Loading Components
 
 ```tsx
 const CustomError = ({ error }: { error: string }) => (
@@ -280,20 +279,21 @@ const CustomError = ({ error }: { error: string }) => (
   </div>
 );
 
+const CustomLoading = () => (
+  <div style={{ padding: '1rem' }}>
+    Generating component, please wait...
+  </div>
+);
+
 <AIElementSlot>
   <AIElement
     prompt="Complex component"
     ErrorComponent={CustomError}
+    LoadingComponent={CustomLoading}
   />
 </AIElementSlot>
 ```
 
-## Requirements
-
-- React 18+
-- Node.js environment with npm/yarn
-- AI API key (OpenAI or Google Gemini)
-
 ## License
 
-MIT © [ehab7osam](https://github.com/ehab7osam)
+MIT © [ehabhosam](https://github.com/ehabhosam)

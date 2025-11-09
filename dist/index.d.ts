@@ -2,6 +2,7 @@ import React from 'react';
 import OpenAI from 'openai';
 import { ChatModel } from 'openai/resources';
 import { GoogleGenAI } from '@google/genai';
+import Anthropic from '@anthropic-ai/sdk';
 
 declare abstract class AIModel<T> {
     modelName: string;
@@ -57,4 +58,10 @@ declare class GeminiModel extends AIModel<GoogleGenAI> {
     generateResponse(prompt: string): Promise<string>;
 }
 
-export { type AIElementProps, AIElementSlot, AIModel, GeminiModel, type GenerationConfig, OpenaiModel, createAIElement };
+declare class AnthropicModel extends AIModel<Anthropic> {
+    constructor(modelName: Anthropic.Messages.Model, apiKey: string);
+    init(): void;
+    generateResponse(prompt: string): Promise<string>;
+}
+
+export { type AIElementProps, AIElementSlot, AIModel, AnthropicModel, GeminiModel, type GenerationConfig, OpenaiModel, createAIElement };

@@ -32,6 +32,7 @@ var index_exports = {};
 __export(index_exports, {
   AIElementSlot: () => ai_element_slot_default,
   AIModel: () => ai_model_default,
+  AnthropicModel: () => anthropic_default,
   GeminiModel: () => gemini_default,
   OpenaiModel: () => open_ai_default,
   createAIElement: () => createAIElement
@@ -812,10 +813,69 @@ var GeminiModel = class extends ai_model_default {
   }
 };
 var gemini_default = GeminiModel;
+
+// src/core/ai/anthropic.ts
+var import_sdk = __toESM(require("@anthropic-ai/sdk"));
+var AnthropicModel = class extends ai_model_default {
+  constructor(modelName, apiKey) {
+    const anthropicClient = new import_sdk.default({
+      apiKey
+    });
+    super(modelName, anthropicClient);
+  }
+  init() {
+    console.log(`Anthropic model ${this.getModelName()} initialized`);
+  }
+  async generateResponse(prompt) {
+    try {
+      const client = this.getInstance();
+      const message = await client.messages.create({
+        model: this.getModelName(),
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 4e3,
+        temperature: 0.7
+      });
+      const content = message.content;
+      if (!content) {
+        throw new Error("No content received from Anthropic API");
+      }
+      return processAnthropicResponse(content);
+    } catch (error) {
+      console.error("Error generating response from Anthropic:", error);
+      throw new Error(
+        `Failed to generate response: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
+    }
+  }
+};
+var anthropic_default = AnthropicModel;
+function processAnthropicResponse(response) {
+  let result = "";
+  for (const block of response) {
+    switch (block.type) {
+      case "text":
+        result += block.text;
+        break;
+      case "web_search_tool_result":
+        result += block.content;
+        break;
+      default:
+        console.warn(`Unhandled content block type: ${block.type}`);
+        break;
+    }
+  }
+  return result;
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   AIElementSlot,
   AIModel,
+  AnthropicModel,
   GeminiModel,
   OpenaiModel,
   createAIElement
