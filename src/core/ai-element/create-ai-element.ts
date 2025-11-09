@@ -8,8 +8,7 @@ export interface AIElementProps {
   prompt: string;
   aiElementProps?: Record<string, any>;
   ErrorComponent?: React.ComponentType<any>;
-  config: GenerationConfig;
-  modelInstance: AIModel<any>;
+  LoadingComponent?: React.ComponentType<any>;
 }
 
 export const createAIElement = (
