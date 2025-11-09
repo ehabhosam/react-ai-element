@@ -52,6 +52,7 @@
     "typescript": "^5.5.0"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
     "@babel/standalone": "^7.28.5",
     "@google/genai": "^1.29.0",
     "openai": "^6.8.1"
