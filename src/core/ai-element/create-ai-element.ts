@@ -3,6 +3,7 @@ import AIModel from "../ai/ai-model";
 import { AIElement } from "../../components/ai-element";
 import { GenerationConfig } from "../../types";
 import { libraryRegistry } from "../library-registry";
+import { renderScheduler } from "../queue";
 
 export interface AIElementProps {
   prompt: string;
@@ -15,6 +16,13 @@ export const createAIElement = (
   modelInstance: AIModel<any>,
   config: GenerationConfig,
 ) => {
+  // Initialize the render scheduler with config
+  // This sets up the worker pool for parallel AI generation
+  renderScheduler.initialize(
+    { maxParallelRenders: config.max_parallel_renders ?? 3 },
+    modelInstance,
+  );
+
   // Register libraries if provided in config
   // (libraries get registered globally in the library registry singleton)
   if (config.libraries) {
@@ -33,3 +41,4 @@ export const createAIElement = (
 
   return BoundAIElement;
 };
+

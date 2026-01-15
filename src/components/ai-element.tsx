@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useSlotContext } from "./ai-element-slot";
 import AIModel from "../core/ai/ai-model";
 import { DynamicRenderer } from "./dynamic-renderer";
-import { generateUIPrompt } from "../core/prompts";
 import { GenerationConfig } from "../types";
 import AILoadingComponent from "./loading-component";
 import DefaultErrorComponent from "./error-component";
+import { renderScheduler } from "../core/queue";
 
 interface AIElementProps {
   modelInstance: AIModel<any>;
@@ -43,12 +43,13 @@ export const AIElement: React.FC<AIElementProps> = ({
       setError(null);
 
       try {
-        const generationPrompt = generateUIPrompt(
+        // Use the render scheduler to queue this request
+        // The scheduler manages parallel execution via worker pool
+        const code = await renderScheduler.scheduleRender(
           prompt,
           config,
           aiElementProps,
         );
-        const code = await modelInstance.generateResponse(generationPrompt);
         console.log(code);
         setGeneratedCode(code);
       } catch (err) {
@@ -88,3 +89,4 @@ export const AIElement: React.FC<AIElementProps> = ({
     />
   );
 };
+

@@ -467,6 +467,134 @@ var DynamicRenderer = ({
   return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Component, { ...componentProps });
 };
 
+// src/components/loading-component.tsx
+var import_jsx_runtime4 = require("react/jsx-runtime");
+var AILoadingComponent = () => {
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
+    "div",
+    {
+      style: {
+        width: "100%",
+        height: "100%",
+        position: "relative",
+        background: "linear-gradient(-45deg, #6366f1, #8b5cf6, #06b6d4, #10b981)",
+        backgroundSize: "400% 400%",
+        animation: "gradientShift 1.5s ease-in-out infinite",
+        borderRadius: "8px",
+        padding: "3px",
+        opacity: 0.75
+      },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+          "div",
+          {
+            style: {
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(45deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.1), rgba(16, 185, 129, 0.15))",
+              backgroundSize: "200% 200%",
+              animation: "innerGradient 2s ease-in-out infinite",
+              borderRadius: "5px",
+              position: "relative",
+              overflow: "hidden"
+            }
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("style", { children: `
+        @keyframes gradientShift {
+          0% {
+            background-position: 0% 50%;
+            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
+          }
+          25% {
+            background-position: 100% 50%;
+            filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.4));
+          }
+          50% {
+            background-position: 100% 100%;
+            filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.5));
+          }
+          75% {
+            background-position: 0% 100%;
+            filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.4));
+          }
+          100% {
+            background-position: 0% 50%;
+            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
+          }
+        }
+
+        @keyframes innerGradient {
+          0%, 100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+        }
+      ` })
+      ]
+    }
+  );
+};
+var loading_component_default = AILoadingComponent;
+
+// src/core/queue/queue-manager.ts
+var QueueManager = class {
+  constructor() {
+    this.queue = [];
+    this.onItemQueued = null;
+  }
+  /**
+   * Add a request to the end of the queue
+   */
+  enqueue(request) {
+    this.queue.push(request);
+    if (this.onItemQueued) {
+      this.onItemQueued();
+    }
+  }
+  /**
+   * Remove and return the first request from the queue
+   */
+  dequeue() {
+    return this.queue.shift();
+  }
+  /**
+   * Peek at the first request without removing it
+   */
+  peek() {
+    return this.queue[0];
+  }
+  /**
+   * Check if queue is empty
+   */
+  isEmpty() {
+    return this.queue.length === 0;
+  }
+  /**
+   * Get current queue size
+   */
+  size() {
+    return this.queue.length;
+  }
+  /**
+   * Set callback for when items are queued
+   */
+  setOnItemQueued(callback) {
+    this.onItemQueued = callback;
+  }
+  /**
+   * Clear all pending requests (for cleanup)
+   */
+  clear() {
+    for (const request of this.queue) {
+      request.reject(new Error("Queue cleared"));
+    }
+    this.queue = [];
+  }
+};
+
 // src/core/prompts/index.ts
 function generateUIPrompt(prompt, config, props) {
   return `
@@ -575,77 +703,207 @@ function provideProps(props) {
   return "- The generated component does not accept any props.";
 }
 
-// src/components/loading-component.tsx
-var import_jsx_runtime4 = require("react/jsx-runtime");
-var AILoadingComponent = () => {
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(
-    "div",
-    {
-      style: {
-        width: "100%",
-        height: "100%",
-        position: "relative",
-        background: "linear-gradient(-45deg, #6366f1, #8b5cf6, #06b6d4, #10b981)",
-        backgroundSize: "400% 400%",
-        animation: "gradientShift 1.5s ease-in-out infinite",
-        borderRadius: "8px",
-        padding: "3px",
-        opacity: 0.75
-      },
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-          "div",
-          {
-            style: {
-              width: "100%",
-              height: "100%",
-              background: "linear-gradient(45deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.1), rgba(16, 185, 129, 0.15))",
-              backgroundSize: "200% 200%",
-              animation: "innerGradient 2s ease-in-out infinite",
-              borderRadius: "5px",
-              position: "relative",
-              overflow: "hidden"
-            }
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("style", { children: `
-        @keyframes gradientShift {
-          0% {
-            background-position: 0% 50%;
-            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
-          }
-          25% {
-            background-position: 100% 50%;
-            filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.4));
-          }
-          50% {
-            background-position: 100% 100%;
-            filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.5));
-          }
-          75% {
-            background-position: 0% 100%;
-            filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.4));
-          }
-          100% {
-            background-position: 0% 50%;
-            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
-          }
-        }
-
-        @keyframes innerGradient {
-          0%, 100% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-        }
-      ` })
-      ]
+// src/core/queue/worker-pool.ts
+var WorkerPool = class {
+  constructor() {
+    this.workers = [];
+    this.aiModel = null;
+  }
+  /**
+   * Initialize the worker pool
+   */
+  initialize(maxWorkers, aiModel) {
+    this.aiModel = aiModel;
+    this.workers = [];
+    for (let i = 0; i < maxWorkers; i++) {
+      this.workers.push({
+        id: i,
+        busy: false,
+        currentRequestId: null
+      });
     }
-  );
+  }
+  /**
+   * Get an idle worker, or undefined if all are busy
+   */
+  getIdleWorker() {
+    return this.workers.find((w) => !w.busy);
+  }
+  /**
+   * Check if any worker is available
+   */
+  hasIdleWorker() {
+    return this.workers.some((w) => !w.busy);
+  }
+  /**
+   * Get the number of currently active workers
+   */
+  getActiveCount() {
+    return this.workers.filter((w) => w.busy).length;
+  }
+  /**
+   * Execute a render request using an available worker
+   * Returns a promise that resolves when the work is complete
+   */
+  async executeRequest(request, onComplete) {
+    const worker = this.getIdleWorker();
+    if (!worker) {
+      throw new Error("No idle worker available");
+    }
+    if (!this.aiModel) {
+      throw new Error("Worker pool not initialized");
+    }
+    worker.busy = true;
+    worker.currentRequestId = request.id;
+    try {
+      const generationPrompt = generateUIPrompt(
+        request.prompt,
+        request.config,
+        request.aiElementProps
+      );
+      const code = await this.aiModel.generateResponse(generationPrompt);
+      request.resolve(code);
+    } catch (error) {
+      request.reject(
+        error instanceof Error ? error : new Error(String(error))
+      );
+    } finally {
+      worker.busy = false;
+      worker.currentRequestId = null;
+      onComplete();
+    }
+  }
+  /**
+   * Get status of all workers
+   */
+  getStatus() {
+    return [...this.workers];
+  }
+  /**
+   * Cleanup and release resources
+   */
+  destroy() {
+    this.workers = [];
+    this.aiModel = null;
+  }
 };
-var loading_component_default = AILoadingComponent;
+
+// src/core/queue/render-scheduler.ts
+var generateRequestId = () => {
+  return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+};
+var _RenderScheduler = class _RenderScheduler {
+  constructor() {
+    this.isProcessing = false;
+    this.initialized = false;
+    this.queue = new QueueManager();
+    this.workerPool = new WorkerPool();
+    this.queue.setOnItemQueued(() => {
+      this.processQueue();
+    });
+  }
+  /**
+   * Get the singleton instance
+   */
+  static getInstance() {
+    if (!_RenderScheduler.instance) {
+      _RenderScheduler.instance = new _RenderScheduler();
+    }
+    return _RenderScheduler.instance;
+  }
+  /**
+   * Initialize the scheduler with configuration and AI model.
+   * Called once during createAIElement.
+   */
+  initialize(config, aiModel) {
+    if (this.initialized) {
+      return;
+    }
+    this.workerPool.initialize(config.maxParallelRenders, aiModel);
+    this.initialized = true;
+  }
+  /**
+   * Schedule a render request for an AIElement.
+   * Returns a promise that resolves with the generated code.
+   */
+  scheduleRender(prompt, config, aiElementProps = {}) {
+    if (!this.initialized) {
+      return Promise.reject(
+        new Error("RenderScheduler not initialized. Call initialize() first.")
+      );
+    }
+    return new Promise((resolve, reject) => {
+      const request = {
+        id: generateRequestId(),
+        prompt,
+        config,
+        aiElementProps,
+        resolve,
+        reject,
+        queuedAt: Date.now()
+      };
+      this.queue.enqueue(request);
+    });
+  }
+  /**
+   * Process queued requests when workers are available.
+   * This is the main queue iterator.
+   */
+  processQueue() {
+    if (this.isProcessing) {
+      return;
+    }
+    this.isProcessing = true;
+    while (!this.queue.isEmpty() && this.workerPool.hasIdleWorker()) {
+      const request = this.queue.dequeue();
+      if (request) {
+        this.workerPool.executeRequest(request, () => {
+          this.processQueue();
+        });
+      }
+    }
+    this.isProcessing = false;
+  }
+  /**
+   * Get current queue size (for debugging/monitoring)
+   */
+  getQueueSize() {
+    return this.queue.size();
+  }
+  /**
+   * Get active worker count (for debugging/monitoring)
+   */
+  getActiveWorkerCount() {
+    return this.workerPool.getActiveCount();
+  }
+  /**
+   * Check if scheduler is initialized
+   */
+  isInitialized() {
+    return this.initialized;
+  }
+  /**
+   * Reset the scheduler (mainly for testing)
+   */
+  reset() {
+    this.queue.clear();
+    this.workerPool.destroy();
+    this.initialized = false;
+    this.isProcessing = false;
+  }
+  /**
+   * Destroy the singleton instance (mainly for testing)
+   */
+  static destroyInstance() {
+    if (_RenderScheduler.instance) {
+      _RenderScheduler.instance.reset();
+      _RenderScheduler.instance = null;
+    }
+  }
+};
+_RenderScheduler.instance = null;
+var RenderScheduler = _RenderScheduler;
+var renderScheduler = RenderScheduler.getInstance();
 
 // src/components/ai-element.tsx
 var import_jsx_runtime5 = require("react/jsx-runtime");
@@ -672,12 +930,11 @@ var AIElement = ({
       setIsLoading(true);
       setError(null);
       try {
-        const generationPrompt = generateUIPrompt(
+        const code = await renderScheduler.scheduleRender(
           prompt,
           config,
           aiElementProps
         );
-        const code = await modelInstance.generateResponse(generationPrompt);
         console.log(code);
         setGeneratedCode(code);
       } catch (err) {
@@ -712,6 +969,10 @@ var AIElement = ({
 
 // src/core/ai-element/create-ai-element.ts
 var createAIElement = (modelInstance, config) => {
+  renderScheduler.initialize(
+    { maxParallelRenders: config.max_parallel_renders ?? 3 },
+    modelInstance
+  );
   if (config.libraries) {
     for (const [name, library] of Object.entries(config.libraries)) {
       libraryRegistry.register(name, { library });

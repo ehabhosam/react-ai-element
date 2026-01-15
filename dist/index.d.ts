@@ -19,14 +19,19 @@ interface GenerationConfig {
     preset: "ts" | "js";
     tailwind: boolean;
     libraries?: Record<string, any>;
+    /**
+     * Maximum number of AIElements that can render in parallel.
+     * Higher values may improve throughput but increase memory usage.
+     * @default 3
+     */
+    max_parallel_renders?: number;
 }
 
 interface AIElementProps {
     prompt: string;
     aiElementProps?: Record<string, any>;
     ErrorComponent?: React.ComponentType<any>;
-    config: GenerationConfig;
-    modelInstance: AIModel<any>;
+    LoadingComponent?: React.ComponentType<any>;
 }
 declare const createAIElement: (modelInstance: AIModel<any>, config: GenerationConfig) => React.FC<AIElementProps>;
 
